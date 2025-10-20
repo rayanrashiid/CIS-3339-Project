@@ -24,4 +24,8 @@ cd frontend
 ```
 Follow instructions in frontend README for setup and running as a local instance.
 
+## Applying Patch Commands Locally
+
+If you receive a `git apply <<'PATCH' ... PATCH` snippet and your terminal appears to "hang" after the `EOF`, the shell is waiting for you to finish pasting the block. Make sure you copy every line from the opening `git apply` command through the final `PATCH`. After pasting, press **Enter** once more and then **Ctrl+D** (or **Cmd+D** on macOS) to signal end-of-file input. Git will then apply the changes and return control to your prompt. Run `git status` to confirm the updated files before staging and committing them.
+
 

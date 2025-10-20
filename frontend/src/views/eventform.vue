@@ -154,98 +154,90 @@
   </main>
 </template>
 
-<script>
+<script setup>
+import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 // import vuelidate validations
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { getServices, createEvent } from '../api/api'
 import { useToast } from 'vue-toastification'
 
-//Notifications
+const router = useRouter()
 const toast = useToast()
 
-export default {
-  data() {
-    return {
-      // event variable to hold new event information
-      event: {
-        name: null,
-        description: null,
-        date: null,
-        services: [],
-        address: {
-          line1: null,
-          line2: null,
-          city: null,
-          county: null,
-          zip: null
-        },
-        attendees: [],
-      },
-      //variable to assign service IDs to event (user clicks checkboxes to add services to event)
-      activeServices: [],
-      // variable that determines which services in the List of Services checkboxes have expanded details
-      openDescriptions: [],
-    }
+// event variable to hold new event information
+const event = reactive({
+  name: null,
+  description: null,
+  date: null,
+  services: [],
+  address: {
+    line1: null,
+    line2: null,
+    city: null,
+    county: null,
+    zip: null
   },
-  setup() {
-    // Register Vuelidate
-    const v$ = useVuelidate();
-    return { v$ };
-  },
-  validations() {
-    // validations
-    const validDate = (value) => {
-      const date = new Date(value)
-      return !isNaN(date)
-    }
+  attendees: []
+})
+//variable to assign service IDs to event (user clicks checkboxes to add services to event)
+const activeServices = ref([])
+// variable that determines which services in the List of Services checkboxes have expanded details
+const openDescriptions = ref([])
 
-    // prevents form submission if new event has a date before the current date
-    const notBeforeToday = (value) => {
-      const today = new Date()
-      return value >= today.toISOString().split('T')[0]
-    }
-
-    return {
-      event: {
-        name: { required },
-        date: {
-          required,
-          validDate,
-          notBeforeToday
-        },
-      }
-    }
-  },
-  async mounted() {
-    // when component is mounted, data is loaded
-    try {
-        const response = await getServices();
-        this.activeServices = response.filter(item => item.status === "Active")
-      } catch (error) {
-        toast.error(error)
-      }
-  },
-  methods: {
-    // method called when user tries to create new event
-    async handleSubmitForm() {
-      // Trigger validation
-      this.v$.$validate();
-
-      if (this.v$.$error) {
-        toast.error('Please fix input field errors')
-        // Form is invalid, do not proceed
-        return;
-      }
-
-      try {
-        const response = await createEvent(this.event);
-        this.$router.push('/findevents')
-        toast.success(response)
-      } catch (error) {
-        toast.error('error creating new event:', error)
-      }
-    },
-  },
+const validDate = (value) => {
+  const date = new Date(value)
+  return !isNaN(date)
 }
+
+// prevents form submission if new event has a date before the current date
+const notBeforeToday = (value) => {
+  const today = new Date()
+  return value >= today.toISOString().split('T')[0]
+}
+
+const rules = {
+  event: {
+    name: { required },
+    date: {
+      required,
+      validDate,
+      notBeforeToday
+    }
+  }
+}
+
+const v$ = useVuelidate(rules, { event })
+
+// method called when user tries to create new event
+const handleSubmitForm = async () => {
+  // Trigger validation
+  v$.value.$validate()
+
+  if (v$.value.$error) {
+    toast.error('Please fix input field errors')
+    // Form is invalid, do not proceed
+    return
+  }
+
+  try {
+    const response = await createEvent(event)
+    router.push('/findevents')
+    toast.success(response)
+  } catch (error) {
+    toast.error('error creating new event:', error)
+  }
+}
+
+onMounted(async () => {
+  // when component is mounted, data is loaded
+  try {
+    const response = await getServices()
+    activeServices.value = response.filter((item) => item.status === 'Active')
+  } catch (error) {
+    toast.error(error)
+  }
+})
 </script>
+
