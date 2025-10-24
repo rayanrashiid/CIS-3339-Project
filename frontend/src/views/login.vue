@@ -33,14 +33,21 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useLoggedInUserStore } from '../store/loggedInUser'
 
 const store = useLoggedInUserStore()
 const username = ref('')
 const password = ref('')
+const route = useRoute()
 
-const handleSubmit = () => {
-  store.login(username.value, password.value)
+const handleSubmit = async () => {
+  const redirectPath = route.query.redirect
+  const loggedIn = await store.login(username.value, password.value, redirectPath)
+
+  if (!loggedIn) {
+    password.value = ''
+  }
 }
 </script>
 

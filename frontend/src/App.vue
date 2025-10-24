@@ -50,22 +50,22 @@
                 Create Service
               </router-link>
             </li>
-            <!--Find Client link - only shows if user is logged in-->
-            <li v-if="user.isLoggedIn">
+            <!--Find Client link - available to viewers and editors-->
+            <li v-if="user.isLoggedIn && ['viewer', 'editor'].includes(user.role)">
               <router-link to="/findclient">
                 <span style="position: relative; top: 6px" class="material-icons">search</span>
                 Find Client
               </router-link>
             </li>
-            <!--Find Event link - only shows if user is logged in-->
-            <li v-if="user.isLoggedIn">
+            <!--Find Event link - available to viewers and editors-->
+            <li v-if="user.isLoggedIn && ['viewer', 'editor'].includes(user.role)">
               <router-link to="/findevents">
                 <span style="position: relative; top: 6px" class="material-icons">search</span>
                 Find Event
               </router-link>
             </li>
-            <!--Find Service link - only shows if user is logged in-->
-            <li v-if="user.isLoggedIn">
+            <!--Find Service link - only shows if user is an editor-->
+            <li v-if="user.role === 'editor'">
               <router-link to="/findservice">
                 <span style="position: relative; top: 6px" class="material-icons">search</span>
                 Find Service
