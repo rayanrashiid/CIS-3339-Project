@@ -1,6 +1,6 @@
 <template>
-  <div class="w-1/2">
-    <canvas class="p-10" ref="zipChart"></canvas>
+  <div class="w-full md:w-2/3 lg:w-1/2 max-w-2xl">
+    <canvas class="p-6" ref="zipChart"></canvas>
   </div>
 </template>
 

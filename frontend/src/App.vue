@@ -92,18 +92,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useLoggedInUserStore } from './store/loggedInUser'
-import { getOrgName } from './api/api'
 
 const user = useLoggedInUserStore()
 const orgName = ref('Dataplatform')
 
-onMounted(async () => {
-  try {
-    orgName.value = await getOrgName()
-  } catch (error) {
-    throw error
-  }
-})
+// Sprint 2: Use static org name; no backend calls
+onMounted(() => {})
 </script>
 
 <style scoped>

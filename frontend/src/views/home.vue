@@ -128,8 +128,8 @@
 import { ref, onMounted } from 'vue'
 import AttendanceChart from '../components/barChart.vue'
 import ZipChart from '../components/donutZipChart.vue'
-import { getAttendance, getClientsByZipCode } from '../api/api'
 
+// Mock data for Sprint 2 (no backend calls)
 const recentEvents = ref([])
 const zips = ref([])
 const labels = ref([])
@@ -149,76 +149,33 @@ const formatDate = (date) => {
   return `${month}/${day}/${year}`
 }
 
-const getAttendanceData = async () => {
-  try {
-    error.value = null
-    loading.value = true
+// Load mock dashboard data
+const loadMockData = () => {
+  // Mock recent events and attendance counts
+  const attendance = [
+    { _id: 'e1', name: 'Food Drive', date: '2025-09-01', attendees: [1,2,3,4] },
+    { _id: 'e2', name: 'Health Clinic', date: '2025-09-10', attendees: [1,2] },
+    { _id: 'e3', name: 'Job Fair', date: '2025-10-05', attendees: [1,2,3] }
+  ]
+  recentEvents.value = attendance
+  labels.value = attendance.map((item) => `${item.name} (${formatDate(item.date)})`)
+  chartData.value = attendance.map((item) => item.attendees.length)
 
-    const attendance = await getAttendance()
-    recentEvents.value = attendance
-    labels.value = attendance.map(
-      (item) => `${item.name} (${formatDate(item.date)})`
-    )
-    chartData.value = attendance.map((item) => item.attendees.length)
-  } catch (err) {
-    if (err.response) {
-      // client received an error response (5xx, 4xx)
-      error.value = {
-        title: 'Server Response',
-        message: err.message
-      }
-    } else if (err.request) {
-      // client never received a response, or request never left
-      error.value = {
-        title: 'Unable to Reach Server',
-        message: err.message
-      }
-    } else {
-      // There's probably an error in your code
-      error.value = {
-        title: 'Application Error',
-        message: err.message
-      }
-    }
-  }
-  loading.value = false
-}
-
-const getZipData = async () => {
-  try {
-    zipError.value = null
-    zipLoading.value = true
-
-    const zipdata = await getClientsByZipCode()
-    zips.value = zipdata
-    zipLabels.value = zipdata.map((item) => item._id)
-    zipChartData.value = zipdata.map((item) => item.count)
-  } catch (err) {
-    if (err.response) {
-      // client received an error response (5xx, 4xx)
-      zipError.value = {
-        title: 'Server Response',
-        message: err.message
-      }
-    } else if (err.request) {
-      // client never received a response, or request never left
-      zipError.value = {
-        title: 'Unable to Reach Server',
-        message: err.message
-      }
-    } else {
-      // There's probably an error in your code
-      zipError.value = {
-        title: 'Application Error',
-        message: err.message
-      }
-    }
-  }
-  zipLoading.value = false
+  // Mock clients by ZIP code
+  const zipdata = [
+    { _id: '78201', count: 12 },
+    { _id: '78202', count: 7 },
+    { _id: '78203', count: 5 },
+    { _id: '78204', count: 9 },
+    { _id: '78205', count: 3 }
+  ]
+  zips.value = zipdata
+  zipLabels.value = zipdata.map((item) => item._id)
+  zipChartData.value = zipdata.map((item) => item.count)
 }
 
 onMounted(() => {
-  getAttendanceData()
-  getZipData()
+  // Use mock data for Sprint 2
+  loadMockData()
 })
 </script>
